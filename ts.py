@@ -9,7 +9,7 @@ num_connections = 9999  # عدد الاتصالات
 num_send_per_connection = 1000  # عدد الحزم المرسلة لكل اتصال
 
 # الحزمة التي سيتم إرسالها
-packet = bytes.fromhex("F10400010900000001000000F1")
+packet = bytes.fromhex("F10400010900000001000000F2")
 
 # دالة لتنفيذ الاتصال وإرسال الحزم بشكل مستمر
 def send_packets(ip, port, packet, num_send_per_connection):
